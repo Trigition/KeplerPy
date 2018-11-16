@@ -1,0 +1,9 @@
+Exofop - Data
+Calibrated, Cotrended, Detredened
+
+SPOC: Science Pipeline
+
+-----TODO-----
+Determine if we need to fold the raw light curve data ourselves
+    -See if we can get the python code NASA uses
+    -Otherwise we will need to do this ourselves (doesn't look too difficult)
