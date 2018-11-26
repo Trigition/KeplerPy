@@ -4,11 +4,9 @@
 """Tests for `kepler` package."""
 
 import pytest
-
 from click.testing import CliRunner
 
-from kepler import kepler
-from kepler import cli
+from kepler import cli, kepler
 
 
 @pytest.fixture

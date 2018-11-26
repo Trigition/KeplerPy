@@ -37,3 +37,19 @@ class MAST_ServerError(KeplerIOError):
                 'wait and try again.'
             )
         super().__init__(message)
+
+
+class CacheNotFound(KeplerIOError):
+
+    """ Raised when Kepler module is asked to load a cache where non exists """
+
+    def __init__(self, path):
+        super().__init__(f'No cache found at: \'{path}\'.')
+
+class MangledCache(KeplerIOError):
+
+    """ Raised when attempting to build a cache on an improper/mangled file. """
+
+    def __init__(self, violator, line_number):
+        message = f'Improper cache with line \'{violator}\': #{line_number}'
+        super().__init__(message)

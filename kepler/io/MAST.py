@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
-import requests
-import exceptions
-import re
 import os
-import tempfile
+import re
 import tarfile
-import pandas as pd
-from astropy.table import Table
 from io import BytesIO
 
+import pandas as pd
+import requests
+from astropy.table import Table
+
+import kepler.io.exceptions as exceptions
 
 MAST_BASE_URL = 'https://archive.stsci.edu/pub/kepler/lightcurves/'
 
@@ -20,7 +20,10 @@ def format_id(kepler_id):
     :kepler_id: The Kepler ID as an integer.
     :returns: A 0 padded formatted string of length 9.
     """
-    return f'{kepler_id:09d}'
+    formatted_id = f'{kepler_id:09d}'
+    if len(formatted_id) != 9:
+        raise ValueError('IDS must be 9 digits long, not {len(formatted_id)}')
+    return formatted_id
 
 
 def get_lightcurve_tar_url(kepler_id):
@@ -66,7 +69,9 @@ def download_lightcurve_for(kepler_id, path=None):
         return f
     else:
         stream = requests.get(url, stream=True)
-        chunks = [chunk for chunk in stream.iter_content(chunk_size=2048) if chunk]
+        chunks = [
+            chunk for chunk in stream.iter_content(chunk_size=2048) if chunk
+        ]
         return b''.join(chunks)
 
 
@@ -76,9 +81,17 @@ def decompress_tar_bundle(tarbytes):
     return [tar.extractfile(member) for member in tar.getmembers()]
 
 
-def get_dataframe(kepler_id):
+def normalize_series(series):
+    return (series - series.mean()) / (series.max() - series.min())
+
+
+def get_dataframe(kepler_id, normalize=True, normalized_fields=['PDCSAP_FLUX']):
     raw_tarbytes = download_lightcurve_for(kepler_id)
     files = decompress_tar_bundle(raw_tarbytes)
     tables = [Table.read(f, format='fits') for f in files]
     dfs = [table.to_pandas() for table in tables]
+    if normalize:
+        for df in dfs:
+            for field in normalized_fields:
+                df[field] = normalize_series(df['field'])
     return pd.concat(dfs)

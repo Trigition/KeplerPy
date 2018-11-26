@@ -2,6 +2,7 @@
 
 """Console script for kepler."""
 import sys
+
 import click
 
 
@@ -12,7 +13,6 @@ def main(args=None):
                "kepler.cli.main")
     click.echo("See click documentation at http://click.pocoo.org/")
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())  # pragma: no cover
