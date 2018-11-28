@@ -46,9 +46,10 @@ class CacheNotFound(KeplerIOError):
     def __init__(self, path):
         super().__init__(f'No cache found at: \'{path}\'.')
 
+
 class MangledCache(KeplerIOError):
 
-    """ Raised when attempting to build a cache on an improper/mangled file. """
+    """Raised when attempting to build a cache on an improper/mangled file."""
 
     def __init__(self, violator, line_number):
         message = f'Improper cache with line \'{violator}\': #{line_number}'

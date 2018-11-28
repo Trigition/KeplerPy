@@ -61,7 +61,7 @@ def download_lightcurve_for(kepler_id, path=None):
     if path:
         filename = f'{path}{os.sep}{kepler_id}-lightcurves.tar'
         stream = requests.get(url, stream=True)
-        f = open(filename, 'wb')
+        f = open(filename, 'w+b')
         for chunk in stream.iter_content(chunk_size=2048):
             if chunk:
                 f.write(chunk)
@@ -81,11 +81,10 @@ def decompress_tar_bundle(tarbytes):
     return [tar.extractfile(member) for member in tar.getmembers()]
 
 
-def normalize_series(series):
-    return (series - series.mean()) / (series.max() - series.min())
-
-
-def get_dataframe(kepler_id, normalize=True, normalized_fields=['PDCSAP_FLUX']):
+def get_dataframe(
+        kepler_id,
+        normalize=True,
+        normalized_fields=['PDCSAP_FLUX']):
     raw_tarbytes = download_lightcurve_for(kepler_id)
     files = decompress_tar_bundle(raw_tarbytes)
     tables = [Table.read(f, format='fits') for f in files]

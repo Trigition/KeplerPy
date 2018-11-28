@@ -5,11 +5,6 @@ from unittest.mock import patch
 import tempfile
 from kepler.io import DataCache
 
-class TarMock:
-    """ Wraps a tarfile object for mocking """
-    def __init__(self, name):
-        self.name = name
-
 
 class Cache_UnitTests(unittest.TestCase):
     """ Performs unit tests on the DataCache class."""
@@ -47,10 +42,26 @@ class Cache_UnitTests(unittest.TestCase):
     @patch('kepler.io.cache.download_lightcurve_for')
     def test_MAST_contact(self, mock):
         test_cache = DataCache(self.directory)
-        mock.return_value(TarMock('tarbytes'))
+        mock.return_value = tempfile.NamedTemporaryFile(mode='rb')
 
         self.assertEqual(len(test_cache.keys()), 0)
 
-        val = test_cache[100]
+        try:
+            val = test_cache[100]
+        except tarfile.ReadError:
+            # No need to spoof opening a tarfile for testing. That case has
+            # already been handled
+            pass
 
         self.assertTrue(mock.called)
+
+    def test_cache_dump(self):
+        test_cache = DataCache(self.directory)
+        test_cache.data_paths = {
+            1: 'firstpath',
+            2: 'secondpath',
+            3: 'thirdpath'
+        }
+        test_cache.write_config()
+        diff_cache = DataCache(self.directory)
+        self.assertDictEqual(diff_cache.data_paths, test_cache.data_paths)

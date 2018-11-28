@@ -5,6 +5,7 @@
 kepler pipeline.
 """
 
+
 def equalize_fits(*fits_files):
     raise NotImplementedError
 

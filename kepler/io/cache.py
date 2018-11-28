@@ -35,14 +35,18 @@ class DataCache:
     def __getitem__(self, key):
         """ Attempt to get data from cache.
 
-        Note: The act of accessing by a key returns a new file descriptor for the tar object.
+        Note: The act of accessing by a key returns a new file descriptor for
+        the tar object.
+
         """
         if key not in self.data_paths:
             # Attempt to download from MAST
             tar = download_lightcurve_for(key, self.path)
             self.data_paths[key] = tar.name
-            return tar
+            self.write_config()
+            return tarfile.open(fileobj=tar, mode='r')
         return tarfile.open(name=self.data_paths[key])
+
 
     def keys(self):
         return self.data_paths.keys()
@@ -59,7 +63,6 @@ class DataCache:
             lines = f.readlines()
             try:
                 for line in lines:
-                    print(line)
                     kepler_id, path = extractor.search(line).groups()
                     kepler_id = int(kepler_id)
                     path = path.strip()
