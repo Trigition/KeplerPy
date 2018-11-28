@@ -6,3 +6,5 @@ __email__ = 'willfong@mit.edu'
 __version__ = '0.0.1a'
 
 from kepler.kepler import Kepler
+
+__all__ = ['Kepler']
