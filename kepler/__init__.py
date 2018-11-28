@@ -4,7 +4,11 @@
 __author__ = """William Fong"""
 __email__ = 'willfong@mit.edu'
 __version__ = '0.0.1a'
+import os
 
-from kepler.kepler import Kepler
+if os.name == 'nt':
+    from .kepler import Kepler
+else:
+    from kepler.kepler import Kepler
 
 __all__ = ['Kepler']

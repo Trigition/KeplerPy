@@ -8,7 +8,10 @@ import pandas as pd
 import requests
 from astropy.table import Table
 
-import kepler.io.exceptions as exceptions
+if os.name == 'nt':
+    from . import exceptions
+else:
+    import kepler.io.exceptions as exceptions
 
 MAST_BASE_URL = 'https://archive.stsci.edu/pub/kepler/lightcurves/'
 

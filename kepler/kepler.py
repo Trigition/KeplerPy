@@ -1,11 +1,20 @@
 # -*- coding: utf-8 -*-
 
 """Main module."""
-from kepler.io.cache import DataCache
-from kepler.io.lightcurve import tar_to_lightcurves, combine_curves
-from kepler.processing.fits import get_fits_from_tar, normalize_series
-from astropy.table import Table
+import os
 import pandas as pd
+
+if os.name == 'nt':
+    from .io.cache import DataCache
+    from .io.lightcurve import tar_to_lightcurves, combine_curves
+    from .processing.fits import get_fits_from_tar, normalize_series
+
+else:
+    from kepler.io.cache import DataCache
+    from kepler.io.lightcurve import tar_to_lightcurves, combine_curves
+    from kepler.processing.fits import get_fits_from_tar, normalize_series
+from astropy.table import Table
+
 
 class Kepler:
 

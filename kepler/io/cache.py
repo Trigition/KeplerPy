@@ -4,8 +4,13 @@
 import os
 import re
 import tarfile
-from kepler.io.MAST import download_lightcurve_for
-from kepler.io.exceptions import MangledCache
+
+if os.name == 'nt':
+    from .MAST import download_lightcurve_for
+    from .exceptions import MangledCache
+else:
+    from kepler.io.MAST import download_lightcurve_for
+    from kepler.io.exceptions import MangledCache
 
 CACHENAME = 'kepler_data.cache'
 
