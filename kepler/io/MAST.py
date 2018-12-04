@@ -7,6 +7,7 @@ from io import BytesIO
 import pandas as pd
 import requests
 from astropy.table import Table
+from lightkurve.search import search_lightcurvefile
 
 if os.name == 'nt':
     from . import exceptions
@@ -51,7 +52,6 @@ def get_lightcurve_tar_url(kepler_id):
 
     return url + tar_url.groups()[0]
 
-
 def download_lightcurve_for(kepler_id, path=None):
     """Downloads lightcurve data for the given Kepler ID.
     :kepler_id: The unique Kepler ID to download data for.
@@ -76,6 +76,12 @@ def download_lightcurve_for(kepler_id, path=None):
             chunk for chunk in stream.iter_content(chunk_size=2048) if chunk
         ]
         return b''.join(chunks)
+
+def download_lightcurve(search_str, **params):
+    result = search_lightcurve(search_str, **params)
+    if result is None:
+        raise exceptions.MAST_IDNotFound()
+    return result
 
 
 def decompress_tar_bundle(tarbytes):
